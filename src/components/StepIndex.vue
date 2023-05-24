@@ -1,15 +1,16 @@
 <template>
   <section class="step-index">
-    <button class="step-number">1</button>
-    <button class="step-number">2</button>
-    <button class="step-number">3</button>
-    <button class="step-number">4</button>
+    <button class="step-number" @click="$emit('step', 1)">1</button>
+    <button class="step-number" @click="$emit('step', 2)">2</button>
+    <button class="step-number" @click="$emit('step', 3)">3</button>
+    <button class="step-number" @click="$emit('step', 4)">4</button>
   </section>
 </template>
 
 <script>
 export default {
   name: "StepIndex",
+  emits: ["step"],
 };
 </script>
 

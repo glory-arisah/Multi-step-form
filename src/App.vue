@@ -7,9 +7,11 @@
         shortly
       </h4>
     </header>
+    <StepIndex @step="(value) => (stepIndex = value)" />
     <section class="form-container">
-      <StepIndex />
-      <component :is="step" />
+      <!-- <keep-alive> -->
+      <component :is="currStep" />
+      <!-- </keep-alive> -->
     </section>
   </main>
 </template>
@@ -17,6 +19,7 @@
 <script>
 import StepIndex from "./components/StepIndex.vue";
 import PersonalDetails from "./components/PersonalDetails.vue";
+import { markRaw } from "vue";
 import About from "./components/About.vue";
 import Assist from "./components/Assist.vue";
 import Budget from "./components/Budget.vue";
@@ -25,11 +28,12 @@ export default {
   data() {
     return {
       steps: {
-        1: PersonalDetails,
-        2: About,
-        3: Assist,
-        4: Budget,
+        1: markRaw(PersonalDetails),
+        2: markRaw(About),
+        3: markRaw(Assist),
+        4: markRaw(Budget),
       },
+      stepComp: markRaw(PersonalDetails),
       stepIndex: 1,
       clientDetails: {
         // personal details
@@ -45,8 +49,14 @@ export default {
     PersonalDetails,
   },
   computed: {
-    step() {
+    currStep() {
       return this.steps[this.stepIndex];
+    },
+  },
+  methods: {
+    stepCalc(value) {
+      this.stepComp = value;
+      console.log(value);
     },
   },
 };
@@ -80,5 +90,9 @@ export default {
   max-width: 70%;
   padding: 1rem;
   color: #000;
+  height: 28rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

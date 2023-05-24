@@ -18,7 +18,8 @@ export default {
 
 <style scoped>
 .personal-details {
-  margin: 2.5rem 0.5rem 2rem 0.5rem;
+  width: 80%;
+  /* margin: 2.5rem 0.5rem 2rem 0.5rem; */
 }
 
 .pd-heading {
@@ -30,6 +31,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
+  width: 100%;
 }
 .pd-form-input {
   padding: 0.8rem 0.9rem;
