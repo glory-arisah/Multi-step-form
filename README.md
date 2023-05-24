@@ -1,24 +1,15 @@
-# multi-form
+# Multi-step form
 
 ## Project setup
-```
-yarn install
-```
+1. `git clone git@github.com:glory-arisah/Multi-step-form.git`
+2. `yarn install`
 
 ### Compiles and hot-reloads for development
-```
-yarn serve
-```
+`yarn serve`
 
 ### Compiles and minifies for production
-```
-yarn build
-```
+`yarn build`
 
 ### Lints and fixes files
-```
-yarn lint
-```
+`yarn lint`
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
