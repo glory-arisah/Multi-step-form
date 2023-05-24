@@ -7,14 +7,48 @@
         shortly
       </h4>
     </header>
-    <section class="form-container">content</section>
+    <section class="form-container">
+      <StepIndex />
+      <component :is="step" />
+    </section>
   </main>
 </template>
 
 <script>
+import StepIndex from "./components/StepIndex.vue";
+import PersonalDetails from "./components/PersonalDetails.vue";
+import About from "./components/About.vue";
+import Assist from "./components/Assist.vue";
+import Budget from "./components/Budget.vue";
 export default {
   name: "App",
-  components: {},
+  data() {
+    return {
+      steps: {
+        1: PersonalDetails,
+        2: About,
+        3: Assist,
+        4: Budget,
+      },
+      stepIndex: 1,
+      clientDetails: {
+        // personal details
+        fullName: "",
+        email: "",
+        phone: "",
+        placeOfBirth: "",
+      },
+    };
+  },
+  components: {
+    StepIndex,
+    PersonalDetails,
+  },
+  computed: {
+    step() {
+      return this.steps[this.stepIndex];
+    },
+  },
 };
 </script>
 
@@ -43,7 +77,7 @@ export default {
   background-color: #fff;
   border-radius: 0.8rem;
   margin: 2rem auto 0 auto;
-  max-width: 65%;
+  max-width: 70%;
   padding: 1rem;
   color: #000;
 }
