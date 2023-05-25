@@ -2,10 +2,34 @@
   <section class="personal-details">
     <form class="pd-form">
       <h2 class="pd-heading">Please fill your details</h2>
-      <input class="pd-form-input" type="text" placeholder="Full name" />
-      <input class="pd-form-input" type="text" placeholder="Age" />
-      <input class="pd-form-input" type="text" placeholder="Phone number" />
-      <input class="pd-form-input" type="text" placeholder="Place of birth" />
+      <input
+        class="pd-form-input"
+        :value="value.fullName"
+        @input="update('fullName', $event.target.value)"
+        type="text"
+        placeholder="Full name"
+      />
+      <input
+        class="pd-form-input"
+        :value="value.email"
+        @input="update('email', $event.target.value)"
+        type="text"
+        placeholder="Email"
+      />
+      <input
+        class="pd-form-input"
+        :value="value.phone"
+        @input="update('phone', $event.target.value)"
+        type="text"
+        placeholder="Phone number"
+      />
+      <input
+        class="pd-form-input"
+        :value="value.placeOfBirth"
+        @input="update('placeOfBirth', $event.target.value)"
+        type="text"
+        placeholder="Place of birth"
+      />
     </form>
   </section>
 </template>
@@ -13,13 +37,19 @@
 <script>
 export default {
   name: "PersonalDetails",
+  props: ["value"],
+  emits: ["update:value"],
+  methods: {
+    update(key, value) {
+      this.$emit("update:value", { ...this.value, [key]: value });
+    },
+  },
 };
 </script>
 
 <style scoped>
 .personal-details {
   width: 80%;
-  /* margin: 2.5rem 0.5rem 2rem 0.5rem; */
 }
 
 .pd-heading {

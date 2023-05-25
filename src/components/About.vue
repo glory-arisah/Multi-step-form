@@ -6,6 +6,8 @@
         class="ac-form-textarea"
         rows="9"
         placeholder="Tell us a bit about your organization."
+        :value="value.about"
+        @input="update('about', $event.target.value)"
       ></textarea>
     </form>
   </section>
@@ -14,6 +16,13 @@
 <script>
 export default {
   name: "About",
+  props: ["value"],
+  emits: ["update:value"],
+  methods: {
+    update(key, value) {
+      this.$emit("update:value", { ...this.value, [key]: value });
+    },
+  },
 };
 </script>
 

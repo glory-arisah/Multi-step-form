@@ -7,12 +7,33 @@
         shortly
       </h4>
     </header>
-    <StepIndex @step="(value) => (stepIndex = value)" />
-    <section class="form-container">
-      <!-- <keep-alive> -->
-      <component :is="currStep" />
-      <!-- </keep-alive> -->
-    </section>
+    <div class="index-form-wrapper">
+      <StepIndex @step="(value) => (stepIndex = value)" :stepId="stepIndex" />
+      <section class="form-container">
+        <keep-alive>
+          <component :is="currStep" v-model:value="clientDetails" />
+        </keep-alive>
+        <!-- next an submit buttons -->
+        <div class="action-btns">
+          <button @click="stepIndex--" class="btn back" v-show="stepIndex > 1">
+            Back
+          </button>
+          <button
+            @click="stepIndex++"
+            class="btn next"
+            v-show="stepIndex < Object.keys(steps).length"
+          >
+            Next
+          </button>
+          <button
+            class="btn submit"
+            v-show="stepIndex === Object.keys(steps).length"
+          >
+            Submit Form
+          </button>
+        </div>
+      </section>
+    </div>
   </main>
 </template>
 
@@ -41,6 +62,9 @@ export default {
         email: "",
         phone: "",
         placeOfBirth: "",
+        about: "",
+        assist: [],
+        budget: 0,
       },
     };
   },
@@ -51,6 +75,9 @@ export default {
   computed: {
     currStep() {
       return this.steps[this.stepIndex];
+    },
+    currStepIndex() {
+      return this.stepIndex;
     },
   },
   methods: {
@@ -82,17 +109,36 @@ export default {
 .header h4 {
   margin-top: 0.8rem;
 }
-
+.index-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  margin: 2rem auto;
+}
 .form-container {
+  margin-top: 1.3rem;
   background-color: #fff;
   border-radius: 0.8rem;
-  margin: 2rem auto 0 auto;
-  max-width: 70%;
+  /* margin: 2rem auto 0 auto; */
+  /* max-width: 70%; */
   padding: 1rem;
   color: #000;
   height: 28rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+}
+/* action buttons styling */
+.action-btns {
+  margin-top: 1rem;
+}
+.next {
+  background-color: #3cd3ad;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 1.001rem;
 }
 </style>
