@@ -1,28 +1,25 @@
 <template>
   <section class="step-index">
     <button
-      :class="{ 'step-number': true, highlight: stepId === 1 }"
-      @click="
-        $emit('step', 1);
-        stepValue = 1;
-      "
+      :class="{ 'step-number': true, highlight: isHighlighted(1) }"
+      @click="$emit('step', 1)"
     >
       1
     </button>
     <button
-      :class="{ 'step-number': true, highlight: stepId === 2 }"
+      :class="{ 'step-number': true, highlight: isHighlighted(2) }"
       @click="$emit('step', 2)"
     >
       2
     </button>
     <button
-      :class="{ 'step-number': true, highlight: stepId === 3 }"
+      :class="{ 'step-number': true, highlight: isHighlighted(3) }"
       @click="$emit('step', 3)"
     >
       3
     </button>
     <button
-      :class="{ 'step-number': true, highlight: stepId === 4 }"
+      :class="{ 'step-number': true, highlight: isHighlighted(4) }"
       @click="$emit('step', 4)"
     >
       4
@@ -33,23 +30,11 @@
 <script>
 export default {
   name: "StepIndex",
-  data() {
-    return {
-      stepValue: 1,
-      myStepId: 0,
-    };
-  },
   emits: ["step"],
   props: ["stepId"],
-  computed: {
-    isHighlight() {
-      console.log(this.stepId, this.stepValue);
-      return this.stepId === this.stepValue;
-    },
-  },
-  watch: {
-    stepId(newVal) {
-      this.myStepId = newVal;
+  methods: {
+    isHighlighted(curStepVal) {
+      return this.stepId === curStepVal;
     },
   },
 };

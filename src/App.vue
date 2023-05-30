@@ -14,7 +14,12 @@
           <component :is="currStep" v-model:value="clientDetails" />
         </keep-alive>
         <!-- next an submit buttons -->
-        <div class="action-btns">
+        <div
+          :class="{
+            'action-btns': true,
+            'left-align-back-btn': stepIndex === 4,
+          }"
+        >
           <button @click="stepIndex--" class="btn back" v-show="stepIndex > 1">
             Back
           </button>
@@ -25,13 +30,13 @@
           >
             Next
           </button>
-          <button
-            class="btn submit"
-            v-show="stepIndex === Object.keys(steps).length"
-          >
-            Submit Form
-          </button>
         </div>
+        <button
+          class="btn submit"
+          v-show="stepIndex === Object.keys(steps).length"
+        >
+          Submit Form
+        </button>
       </section>
     </div>
   </main>
@@ -89,56 +94,4 @@ export default {
 };
 </script>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.main {
-  min-height: 100vh;
-  background: linear-gradient(to bottom right, #7f3adf, #90a0f9);
-  color: #ffd;
-}
-
-.header {
-  text-align: center;
-  padding-top: 3rem;
-}
-.header h4 {
-  margin-top: 0.8rem;
-}
-.index-form-wrapper {
-  display: flex;
-  flex-direction: column;
-  width: 70%;
-  margin: 2rem auto;
-}
-.form-container {
-  margin-top: 1.3rem;
-  background-color: #fff;
-  border-radius: 0.8rem;
-  /* margin: 2rem auto 0 auto; */
-  /* max-width: 70%; */
-  padding: 1rem;
-  color: #000;
-  height: 28rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-/* action buttons styling */
-.action-btns {
-  margin-top: 1rem;
-}
-.next {
-  background-color: #3cd3ad;
-  padding: 0.6rem 1.5rem;
-  border: none;
-  border-radius: 5px;
-  color: #fff;
-  font-size: 1.001rem;
-}
-</style>
+<style lang="scss" src="./assets/css/App.scss"></style>

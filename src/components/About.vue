@@ -29,7 +29,6 @@ export default {
 <style scoped>
 .about-company {
   width: 80%;
-  /* margin: 2.5rem 0.5rem 2rem 0.5rem; */
 }
 
 .ac-heading {
@@ -52,7 +51,6 @@ export default {
   font-weight: 300;
   resize: none;
 }
-
 .ac-form-textarea:focus,
 .ac-form-textarea:hover {
   outline: none;

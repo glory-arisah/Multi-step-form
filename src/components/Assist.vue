@@ -73,8 +73,10 @@ export default {
   margin-bottom: 1rem;
 }
 .p-checkbox {
-  padding: 0.6rem;
+  padding-block: 0.6rem;
+  width: 100%;
   font-size: 1.05rem;
+  transform: translateX(30%);
 }
 .p-checkbox span {
   margin-left: 0.6rem;

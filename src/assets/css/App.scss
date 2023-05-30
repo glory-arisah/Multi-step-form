@@ -1,0 +1,97 @@
+$white: #fff;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+// flex column mixin
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// next and submit buttons styling
+%green-btn {
+  color: $white;
+  background-color: #3cd3ad;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1.001rem;
+  transition: color 300ms, background-color 300ms, border 300ms;
+
+  &:hover {
+    transition: all 300ms;
+    background-color: $white;
+    border: 0.7px solid #3cd3ad;
+    color: #35bb9a;
+  }
+}
+
+.main {
+  background: linear-gradient(to bottom right, #7f3adf, #90a0f9);
+  color: #ffd;
+  min-height: 100vh;
+
+  .header {
+    text-align: center;
+    padding-top: 3rem;
+
+    h4 {
+      margin-top: 0.8rem;
+    }
+  }
+  .index-form-wrapper {
+    @include flex-column;
+    width: 70%;
+    margin: 2rem auto;
+
+    .form-container {
+      @include flex-column;
+      justify-content: center;
+      align-items: center;
+      background-color: $white;
+      color: #000;
+      margin-top: 1.3rem;
+      padding: 1rem;
+      height: 28rem;
+      border-radius: 0.8rem;
+    }
+    /* action buttons styling */
+    .action-btns {
+      justify-content: space-around;
+      margin-top: 1rem;
+      width: 100%;
+      display: flex;
+      // next button style
+      .next {
+        @extend %green-btn;
+        cursor: pointer;
+      }
+      &:hover {
+      }
+      // back button style
+      .back {
+        border: none;
+        background: none;
+        text-decoration: underline dotted #812c2c;
+        font-size: 1.001rem;
+        cursor: pointer;
+
+        &:hover {
+          color: #812c2c;
+          text-decoration: none;
+        }
+      }
+    }
+    // submit button
+    .submit {
+      @extend %green-btn;
+      cursor: pointer;
+    }
+    .left-align-back-btn {
+      justify-content: flex-start;
+    }
+  }
+}

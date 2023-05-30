@@ -1,0 +1,42 @@
+.budget {
+  width: 80%;
+
+  .bu-heading {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  /* slider styling */
+  .slider {
+    height: 70px;
+    background: #fcfcfc;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+      font-weight: 600;
+      padding-left: 2rem;
+    }
+    input[type="range"] {
+      /* -webkit-appearance:none !important; */
+      width: 420px;
+      height: 2px;
+      background: black;
+      border: none;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      /* -webkit-appearance: none !important; */
+      width: 30px;
+      height: 30px;
+      background: black;
+      border: 2px solid black;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: black;
+    }
+  }
+}
