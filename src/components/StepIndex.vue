@@ -28,16 +28,24 @@
 </template>
 
 <script>
+import { useStore } from "vuex"
+
 export default {
   name: "StepIndex",
   emits: ["step"],
-  props: ["stepId"],
   methods: {
-    isHighlighted(curStepVal) {
-      return this.stepId === curStepVal;
-    },
+    // isHighlighted(curStepVal) {
+    //   return this.$store.state.stepIndex === curStepVal
+    // },
   },
-};
+  setup() {
+    const store = useStore()
+    const isHighlighted = (curStepVal) => store.state.stepIndex === curStepVal
+    return {
+      isHighlighted,
+    }
+  },
+}
 </script>
 
 <style scoped>

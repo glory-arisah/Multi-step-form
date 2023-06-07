@@ -6,32 +6,32 @@
         <p class="p-checkbox">
           <input
             type="checkbox"
-            :value="value.assist"
-            @input="update('assist', $event.target.checked, 'UI Design')"
+            :value="$store.state.profile.assist"
+            @input="setProfileVal($event.target.checked, 'UI Design')"
           />
           <span>UI Design</span>
         </p>
         <p class="p-checkbox">
           <input
             type="checkbox"
-            :value="value.assist"
-            @input="update('assist', $event.target.checked, 'Marketing Site')"
+            :value="$store.state.profile.assist"
+            @input="setProfileVal($event.target.checked, 'Marketing Site')"
           />
           <span>Marketing Site</span>
         </p>
         <p class="p-checkbox">
           <input
             type="checkbox"
-            :value="value.assist"
-            @input="update('assist', $event.target.checked, 'UI Development')"
+            :value="$store.state.profile.assist"
+            @input="setProfileVal($event.target.checked, 'UI Development')"
           />
           <span>UI Development</span>
         </p>
         <p class="p-checkbox">
           <input
             type="checkbox"
-            :value="value.assist"
-            @input="update('assist', $event.target.checked, 'Grab a beer')"
+            :value="$store.state.profile.assist"
+            @input="setProfileVal($event.target.checked, 'Grab a beer')"
           />
           <span>Grab a beer</span>
         </p>
@@ -41,25 +41,52 @@
 </template>
 
 <script>
+import { useStore } from "vuex";
+
+// import { computed } from "vue"
 export default {
   name: "Assist",
-  props: ["value"],
-  emits: ["update:value"],
+  props: ["value", "assist"],
+  emits: ["update:value", "update:assist"],
   methods: {
-    update(key, check, value) {
+    // update(key, check, value) {
+    //   if (check) {
+    //     this.$emit("update:value", {
+    //       ...this.value,
+    //       [key]: [...this.value[key], value],
+    //     })
+    //   } else {
+    //     const removeAssist = this.value.assist.filter((item) => item !== value)
+    //     this.$emit("update:value", {
+    //       ...this.value,
+    //       [key]: [...removeAssist],
+    //     })
+    //   }
+    // },
+  },
+  setup() {
+    const store = useStore();
+    const setProfileVal = (check, value) => {
       if (check) {
-        this.$emit("update:value", {
-          ...this.value,
-          [key]: [...this.value[key], value],
+        store.dispatch("setProfileVals", {
+          type: "assist",
+          value: [...store.state.profile.assist, value],
         });
+        // emit("update:assist", [...props.value["assist"], value]);
       } else {
-        const removeAssist = this.value.assist.filter((item) => item !== value);
-        this.$emit("update:value", {
-          ...this.value,
-          [key]: [...removeAssist],
+        const removeAssist = store.state.profile.assist.filter(
+          (item) => item !== value
+        );
+        store.dispatch("setProfileVals", {
+          type: "assist",
+          value: [...removeAssist],
         });
+        // emit("update:assist", [...removeAssist]);
       }
-    },
+    };
+    return {
+      setProfileVal,
+    };
   },
 };
 </script>

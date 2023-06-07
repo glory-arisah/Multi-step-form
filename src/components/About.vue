@@ -6,22 +6,44 @@
         class="ac-form-textarea"
         rows="9"
         placeholder="Tell us a bit about your organization."
-        :value="value.about"
-        @input="update('about', $event.target.value)"
+        :value="$store.state.profile.about"
+        @input="setProfileVal($event)"
+        ref="firstInput"
       ></textarea>
     </form>
   </section>
 </template>
 
 <script>
+import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
 export default {
   name: "About",
-  props: ["value"],
-  emits: ["update:value"],
+  props: ["value", "about"],
+  emits: ["update:value", "update:about"],
   methods: {
-    update(key, value) {
-      this.$emit("update:value", { ...this.value, [key]: value });
-    },
+    // update(key, value) {
+    //   this.$emit("update:value", { ...this.value, [key]: value });
+    // },
+  },
+  setup() {
+    const store = useStore();
+    const firstInput = ref(null);
+    // const update = (e) => {
+    //   emit("update:about", e.target.value)
+    // }
+
+    const setProfileVal = (event) => {
+      const value = event.target.value;
+      store.dispatch("setProfileVals", { type: "about", value });
+    };
+
+    onMounted(() => firstInput.value.focus());
+
+    return {
+      setProfileVal,
+      firstInput,
+    };
   },
 };
 </script>

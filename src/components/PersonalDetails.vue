@@ -4,29 +4,30 @@
       <h2 class="pd-heading">Please fill your details</h2>
       <input
         class="pd-form-input"
-        :value="value.fullName"
-        @input="update('fullName', $event.target.value)"
+        :value="$store.state.profile.fullName"
+        @input="setProfileVal('fullName', $event)"
         type="text"
         placeholder="Full name"
+        ref="firstInput"
       />
       <input
         class="pd-form-input"
-        :value="value.email"
-        @input="update('email', $event.target.value)"
+        :value="$store.state.profile.email"
+        @input="setProfileVal('email', $event)"
         type="text"
         placeholder="Email"
       />
       <input
         class="pd-form-input"
-        :value="value.phone"
-        @input="update('phone', $event.target.value)"
+        :value="$store.state.profile.phone"
+        @input="setProfileVal('phone', $event)"
         type="text"
         placeholder="Phone number"
       />
       <input
         class="pd-form-input"
-        :value="value.placeOfBirth"
-        @input="update('placeOfBirth', $event.target.value)"
+        :value="$store.state.profile.placeOfBirth"
+        @input="setProfileVal('placeOfBirth', $event)"
         type="text"
         placeholder="Place of birth"
       />
@@ -35,14 +36,40 @@
 </template>
 
 <script>
+import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
 export default {
   name: "PersonalDetails",
-  props: ["value"],
-  emits: ["update:value"],
   methods: {
-    update(key, value) {
-      this.$emit("update:value", { ...this.value, [key]: value });
-    },
+    // update(key, value) {
+    //   this.$emit("update:value", { ...this.value, [key]: value });
+    // },
+  },
+  setup() {
+    const store = useStore();
+    const firstInput = ref(null);
+    // const update = (key, value) => {
+    //   emit("update:value", { ...props.value, [key]: value });
+    //   console.log(key, value);
+    // };
+
+    // const updateByType = (type, e) => {
+    //   emit(`update:${type}`, e.target.value);
+    // };
+
+    const setProfileVal = (type, e) => {
+      const value = e.target.value;
+      store.dispatch("setProfileVals", { type, value });
+    };
+    onMounted(() => {
+      firstInput.value.focus();
+    });
+    return {
+      // update,
+      // updateByType,
+      setProfileVal,
+      firstInput,
+    };
   },
 };
 </script>

@@ -7,29 +7,46 @@
           type="range"
           min="1"
           max="100"
-          :value="value.budget"
-          @input="update('budget', $event.target.value)"
+          :value="$store.state.profile.budget"
+          @input="setProfileVal($event)"
         />
-        <p>${{ value.budget }}</p>
+        <p>${{ $store.state.profile.budget }}</p>
       </div>
     </form>
   </section>
 </template>
 
 <script>
+import { ref } from "vue";
+import { useStore } from "vuex";
 export default {
   name: "Budget",
   data() {
     return {
-      rangeValue: 10,
+      // rangeValue: 10,
     };
   },
-  props: ["value"],
-  emits: ["update:value"],
+  props: ["value", "budget"],
+  emits: ["update:budget"],
   methods: {
-    update(key, value) {
-      this.$emit("update:value", { ...this.value, [key]: value });
-    },
+    // update(key, value) {
+    //   this.$emit("update:value", { ...this.value, [key]: value });
+    // },
+  },
+  setup() {
+    const store = useStore();
+    const rangeValue = ref(10);
+    const setProfileVal = (e) => {
+      store.dispatch("setProfileVals", {
+        type: "budget",
+        value: e.target.value,
+      });
+    };
+
+    return {
+      rangeValue,
+      setProfileVal,
+    };
   },
 };
 </script>

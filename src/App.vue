@@ -7,33 +7,41 @@
         shortly
       </h4>
     </header>
+    We currently have {{ $store.state.users.length }} submission(s)
+    <br />
+    {{ $store.state.profile }}
     <div class="index-form-wrapper">
-      <StepIndex @step="(value) => (stepIndex = value)" :stepId="stepIndex" />
+      <StepIndex @step="(value) => ($store.state.stepIndex = value)" />
       <section class="form-container">
         <keep-alive>
-          <component :is="currStep" v-model:value="clientDetails" />
+          <component :is="currentStep" />
         </keep-alive>
         <!-- next an submit buttons -->
         <div
           :class="{
             'action-btns': true,
-            'left-align-back-btn': stepIndex === 4,
+            'left-align-back-btn': $store.state.stepIndex === 4,
           }"
         >
-          <button @click="stepIndex--" class="btn back" v-show="stepIndex > 1">
+          <button
+            @click="$store.dispatch('previous')"
+            class="btn back"
+            v-show="$store.state.stepIndex > 1"
+          >
             Back
           </button>
           <button
-            @click="stepIndex++"
+            @click="$store.dispatch('next')"
             class="btn next"
-            v-show="stepIndex < Object.keys(steps).length"
+            v-show="$store.state.stepIndex < Object.keys(steps).length"
           >
             Next
           </button>
         </div>
         <button
+          @click="handleSubmit"
           class="btn submit"
-          v-show="stepIndex === Object.keys(steps).length"
+          v-show="$store.state.stepIndex === Object.keys(steps).length"
         >
           Submit Form
         </button>
@@ -43,9 +51,10 @@
 </template>
 
 <script>
+import { useStore } from "vuex";
+import { reactive, ref, computed } from "vue";
 import StepIndex from "./components/StepIndex.vue";
 import PersonalDetails from "./components/PersonalDetails.vue";
-import { markRaw } from "vue";
 import About from "./components/About.vue";
 import Assist from "./components/Assist.vue";
 import Budget from "./components/Budget.vue";
@@ -53,43 +62,85 @@ export default {
   name: "App",
   data() {
     return {
-      steps: {
-        1: markRaw(PersonalDetails),
-        2: markRaw(About),
-        3: markRaw(Assist),
-        4: markRaw(Budget),
-      },
-      stepComp: markRaw(PersonalDetails),
-      stepIndex: 1,
-      clientDetails: {
-        // personal details
-        fullName: "",
-        email: "",
-        phone: "",
-        placeOfBirth: "",
-        about: "",
-        assist: [],
-        budget: 0,
-      },
+      // steps: {
+      //   1: markRaw(PersonalDetails),
+      //   2: markRaw(About),
+      //   3: markRaw(Assist),
+      //   4: markRaw(Budget),
+      // },
+      // stepComp: markRaw(PersonalDetails),
+      // stepIndex: 1,
+      // clientDetails: {
+      //   // personal details
+      //   fullName: "",
+      //   email: "",
+      //   phone: "",
+      //   placeOfBirth: "",
+      //   about: "",
+      //   assist: [],
+      //   budget: 0,
+      // },
     };
   },
   components: {
     StepIndex,
     PersonalDetails,
+    About,
+    Assist,
+    Budget,
+  },
+  setup() {
+    const store = useStore();
+    // list of each form step
+    const steps = reactive({
+      1: "PersonalDetails",
+      2: "About",
+      3: "Assist",
+      4: "Budget",
+    });
+    // current component
+    const stepComp = ref(steps[1]);
+    // current component's index
+    // const stepIndex = ref(store.state.stepIndex)
+    const currentStep = computed(() => steps[store.state.stepIndex]);
+    // method property(s)
+    const stepCalc = (value) => (stepComp.value = value);
+    // personal details
+    const clientDetails = reactive({
+      fullName: "",
+      email: "",
+      phone: "",
+      placeOfBirth: "",
+      about: "",
+      assist: [],
+      budget: 0,
+    });
+    // submit form method
+    const handleSubmit = () => {
+      store.dispatch("createUser");
+      store.dispatch("resetStepIndex");
+    };
+    //
+    return {
+      steps,
+      stepComp,
+      clientDetails,
+      stepCalc,
+      handleSubmit,
+      currentStep,
+      // stepIndex,
+    };
   },
   computed: {
-    currStep() {
-      return this.steps[this.stepIndex];
-    },
-    currStepIndex() {
-      return this.stepIndex;
-    },
+    // currStep() {
+    //   return this.steps[this.stepIndex]
+    // },
   },
   methods: {
-    stepCalc(value) {
-      this.stepComp = value;
-      console.log(value);
-    },
+    // stepCalc(value) {
+    //   this.stepComp = value
+    //   console.log(value)
+    // },
   },
 };
 </script>
