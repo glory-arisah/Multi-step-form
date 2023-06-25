@@ -7,9 +7,7 @@
         shortly
       </h4>
     </header>
-    We currently have {{ $store.state.users.length }} submission(s)
     <br />
-    {{ $store.state.profile }}
     <div class="index-form-wrapper">
       <StepIndex @step="(value) => ($store.state.stepIndex = value)" />
       <section class="form-container">
