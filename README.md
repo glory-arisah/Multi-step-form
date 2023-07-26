@@ -1,6 +1,13 @@
 # Multi-step form
 
-#### A vue pet project to practice Vuex and dynamic components. Dynamic components were used for the initial build, it was then replaced by VueX.
+#### A vue pet project to practice Vuex, mixins and dynamic components. The Dynamic component was used to display the different forms, and Vuex was used to store the forms' data locally.
+
+### Technologies used
+
+1. Vue 3 Options API
+2. TypeScript
+3. Vuex
+4. Scss
 
 ## Project setup
 

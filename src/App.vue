@@ -9,10 +9,10 @@
     </header>
     <br />
     <div class="index-form-wrapper">
-      <StepIndex @step="(value) => ($store.state.stepIndex = value)" />
+      <StepIndex @step="(value: number) => ($store.state.stepIndex = value)" />
       <section class="form-container">
         <keep-alive>
-          <component :is="currentStep" />
+          <component :is="currentStep" :steps="steps" />
         </keep-alive>
         <!-- next an submit buttons -->
         <div
@@ -28,13 +28,6 @@
           >
             Back
           </button>
-          <button
-            @click="$store.dispatch('next')"
-            class="btn next"
-            v-show="$store.state.stepIndex < Object.keys(steps).length"
-          >
-            Next
-          </button>
         </div>
         <button
           @click="handleSubmit"
@@ -48,8 +41,9 @@
   </main>
 </template>
 
-<script>
+<script lang="ts">
 import { useStore } from "vuex";
+import { key } from "./store/index";
 import { reactive, ref, computed } from "vue";
 import StepIndex from "./components/StepIndex.vue";
 import PersonalDetails from "./components/PersonalDetails.vue";
@@ -58,28 +52,6 @@ import Assist from "./components/Assist.vue";
 import Budget from "./components/Budget.vue";
 export default {
   name: "App",
-  data() {
-    return {
-      // steps: {
-      //   1: markRaw(PersonalDetails),
-      //   2: markRaw(About),
-      //   3: markRaw(Assist),
-      //   4: markRaw(Budget),
-      // },
-      // stepComp: markRaw(PersonalDetails),
-      // stepIndex: 1,
-      // clientDetails: {
-      //   // personal details
-      //   fullName: "",
-      //   email: "",
-      //   phone: "",
-      //   placeOfBirth: "",
-      //   about: "",
-      //   assist: [],
-      //   budget: 0,
-      // },
-    };
-  },
   components: {
     StepIndex,
     PersonalDetails,
@@ -88,7 +60,14 @@ export default {
     Budget,
   },
   setup() {
-    const store = useStore();
+    const store = useStore(key);
+
+    interface Steps {
+      1: string;
+      2: string;
+      3: string;
+      4: string;
+    }
     // list of each form step
     const steps = reactive({
       1: "PersonalDetails",
@@ -100,9 +79,11 @@ export default {
     const stepComp = ref(steps[1]);
     // current component's index
     // const stepIndex = ref(store.state.stepIndex)
-    const currentStep = computed(() => steps[store.state.stepIndex]);
+    const currentStep = computed(
+      (): string => steps[store.state.stepIndex as keyof Steps]
+    );
     // method property(s)
-    const stepCalc = (value) => (stepComp.value = value);
+    // const stepCalc = (value) => (stepComp.value = value);
     // personal details
     const clientDetails = reactive({
       fullName: "",
@@ -123,24 +104,11 @@ export default {
       steps,
       stepComp,
       clientDetails,
-      stepCalc,
       handleSubmit,
       currentStep,
-      // stepIndex,
     };
-  },
-  computed: {
-    // currStep() {
-    //   return this.steps[this.stepIndex]
-    // },
-  },
-  methods: {
-    // stepCalc(value) {
-    //   this.stepComp = value
-    //   console.log(value)
-    // },
   },
 };
 </script>
 
-<style lang="scss" src="./assets/css/App.scss"></style>
+<!-- <style lang="scss" src="./assets/css/App.scss"></style> -->

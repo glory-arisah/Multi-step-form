@@ -5,69 +5,97 @@
       <input
         class="pd-form-input"
         :value="$store.state.profile.fullName"
-        @input="setProfileVal('fullName', $event)"
+        @input="
+          handleLiveValidations('fullName', $event);
+          setStoreErrors();
+        "
         type="text"
         placeholder="Full name"
         ref="firstInput"
       />
+      <!-- validation error messages -->
+      <p v-show="showValidErrors.fullName.length" class="text-danger-sm">
+        * fullname should be between 8 and 35 characters
+      </p>
+      <p v-show="showValidErrors.fullName.blank" class="text-danger-sm">
+        * this field is required
+      </p>
       <input
         class="pd-form-input"
         :value="$store.state.profile.email"
-        @input="setProfileVal('email', $event)"
+        @input="
+          handleLiveValidations('email', $event);
+          setStoreErrors();
+        "
         type="text"
         placeholder="Email"
       />
+      <!-- validation error messages -->
+      <p v-show="showValidErrors.email.length" class="text-danger-sm">
+        * email should be between 8 and 35 characters
+      </p>
+      <p v-show="showValidErrors.email.blank" class="text-danger-sm">
+        * this field is required
+      </p>
+      <p v-show="showValidErrors.email.format" class="text-danger-sm">
+        * please enter a valid email
+      </p>
       <input
         class="pd-form-input"
         :value="$store.state.profile.phone"
-        @input="setProfileVal('phone', $event)"
+        @input="
+          handleLiveValidations('phone', $event);
+          setStoreErrors();
+        "
         type="text"
         placeholder="Phone number"
       />
+      <!-- validation error messages -->
+      <p v-show="showValidErrors.phone.blank" class="text-danger-sm">
+        * this field is required
+      </p>
+      <p v-show="showValidErrors.phone.format" class="text-danger-sm">
+        * please enter a valid phone number
+      </p>
       <input
         class="pd-form-input"
         :value="$store.state.profile.placeOfBirth"
-        @input="setProfileVal('placeOfBirth', $event)"
+        @input="
+          handleLiveValidations('placeOfBirth', $event);
+          setStoreErrors();
+        "
         type="text"
         placeholder="Place of birth"
       />
+      <!-- validation error messages -->
+      <p v-show="showValidErrors.placeOfBirth.blank" class="text-danger-sm">
+        * this field is required
+      </p>
     </form>
   </section>
+  <button
+    @click="handleSubmit"
+    class="btn next"
+    v-show="$store.state.stepIndex < Object.keys(steps).length"
+  >
+    Next
+  </button>
 </template>
 
-<script>
+<script lang="ts">
 import { onMounted, ref } from "vue";
-import { useStore } from "vuex";
+import UserProfileValidation from "@/mixins/UserProfileValidation.vue";
 export default {
   name: "PersonalDetails",
-  methods: {
-    // update(key, value) {
-    //   this.$emit("update:value", { ...this.value, [key]: value });
-    // },
-  },
+  props: ["steps"],
+  mixins: [UserProfileValidation],
   setup() {
-    const store = useStore();
     const firstInput = ref(null);
-    // const update = (key, value) => {
-    //   emit("update:value", { ...props.value, [key]: value });
-    //   console.log(key, value);
-    // };
-
-    // const updateByType = (type, e) => {
-    //   emit(`update:${type}`, e.target.value);
-    // };
-
-    const setProfileVal = (type, e) => {
-      const value = e.target.value;
-      store.dispatch("setProfileVals", { type, value });
-    };
     onMounted(() => {
-      firstInput.value.focus();
+      firstInput.value && (firstInput.value as HTMLInputElement).focus();
     });
+
     return {
-      // update,
-      // updateByType,
-      setProfileVal,
       firstInput,
     };
   },
@@ -75,6 +103,12 @@ export default {
 </script>
 
 <style scoped>
+/* Utilities */
+.text-danger-sm {
+  color: rgb(239 68 68);
+  font-size: 0.75rem /* 12px */;
+  line-height: 1rem /* 16px */;
+}
 .personal-details {
   width: 80%;
 }

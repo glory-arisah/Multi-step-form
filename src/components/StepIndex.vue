@@ -9,26 +9,30 @@
     <button
       :class="{ 'step-number': true, highlight: isHighlighted(2) }"
       @click="$emit('step', 2)"
+      :disabled="$store.state.hasErrors"
     >
       2
     </button>
     <button
       :class="{ 'step-number': true, highlight: isHighlighted(3) }"
       @click="$emit('step', 3)"
+      :disabled="$store.state.hasErrors"
     >
       3
     </button>
     <button
       :class="{ 'step-number': true, highlight: isHighlighted(4) }"
       @click="$emit('step', 4)"
+      :disabled="$store.state.hasErrors"
     >
       4
     </button>
   </section>
 </template>
 
-<script>
-import { useStore } from "vuex"
+<script lang="ts">
+import { useStore } from "vuex";
+import { key } from "../store/index";
 
 export default {
   name: "StepIndex",
@@ -39,13 +43,14 @@ export default {
     // },
   },
   setup() {
-    const store = useStore()
-    const isHighlighted = (curStepVal) => store.state.stepIndex === curStepVal
+    const store = useStore(key);
+    const isHighlighted = (curStepVal: number) =>
+      store.state.stepIndex === curStepVal;
     return {
       isHighlighted,
-    }
+    };
   },
-}
+};
 </script>
 
 <style scoped>

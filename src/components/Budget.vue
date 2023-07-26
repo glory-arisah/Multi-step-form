@@ -16,30 +16,24 @@
   </section>
 </template>
 
-<script>
+<script lang="ts">
 import { ref } from "vue";
 import { useStore } from "vuex";
+import { key } from "../store/index";
 export default {
   name: "Budget",
-  data() {
-    return {
-      // rangeValue: 10,
-    };
-  },
+
   props: ["value", "budget"],
   emits: ["update:budget"],
-  methods: {
-    // update(key, value) {
-    //   this.$emit("update:value", { ...this.value, [key]: value });
-    // },
-  },
   setup() {
-    const store = useStore();
+    const store = useStore(key);
     const rangeValue = ref(10);
-    const setProfileVal = (e) => {
+    const setProfileVal = (event: Event) => {
+      const { target } = event;
+      const TargetType = target as HTMLInputElement;
       store.dispatch("setProfileVals", {
         type: "budget",
-        value: e.target.value,
+        value: TargetType.value,
       });
     };
 

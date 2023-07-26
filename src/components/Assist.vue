@@ -7,7 +7,12 @@
           <input
             type="checkbox"
             :value="$store.state.profile.assist"
-            @input="setProfileVal($event.target.checked, 'UI Design')"
+            @input="
+              setProfileVal(
+                ($event.target as HTMLInputElement).checked,
+                'UI Design'
+              )
+            "
           />
           <span>UI Design</span>
         </p>
@@ -15,7 +20,12 @@
           <input
             type="checkbox"
             :value="$store.state.profile.assist"
-            @input="setProfileVal($event.target.checked, 'Marketing Site')"
+            @input="
+              setProfileVal(
+                ($event.target as HTMLInputElement).checked,
+                'Marketing Site'
+              )
+            "
           />
           <span>Marketing Site</span>
         </p>
@@ -23,7 +33,12 @@
           <input
             type="checkbox"
             :value="$store.state.profile.assist"
-            @input="setProfileVal($event.target.checked, 'UI Development')"
+            @input="
+              setProfileVal(
+                ($event.target as HTMLInputElement).checked,
+                'UI Development'
+              )
+            "
           />
           <span>UI Development</span>
         </p>
@@ -31,48 +46,38 @@
           <input
             type="checkbox"
             :value="$store.state.profile.assist"
-            @input="setProfileVal($event.target.checked, 'Grab a beer')"
+            @input="
+              setProfileVal(
+                ($event.target as HTMLInputElement).checked,
+                'Grab a beer'
+              )
+            "
           />
           <span>Grab a beer</span>
         </p>
       </section>
     </form>
   </section>
+  <!-- v-show="$store.state.stepIndex < Object.keys(steps).length" -->
+  <button @click="$store.dispatch('next')" class="btn next">Next</button>
 </template>
 
-<script>
+<script lang="ts">
 import { useStore } from "vuex";
+import { key } from "../store/index";
 
-// import { computed } from "vue"
 export default {
   name: "Assist",
   props: ["value", "assist"],
   emits: ["update:value", "update:assist"],
-  methods: {
-    // update(key, check, value) {
-    //   if (check) {
-    //     this.$emit("update:value", {
-    //       ...this.value,
-    //       [key]: [...this.value[key], value],
-    //     })
-    //   } else {
-    //     const removeAssist = this.value.assist.filter((item) => item !== value)
-    //     this.$emit("update:value", {
-    //       ...this.value,
-    //       [key]: [...removeAssist],
-    //     })
-    //   }
-    // },
-  },
   setup() {
-    const store = useStore();
-    const setProfileVal = (check, value) => {
+    const store = useStore(key);
+    const setProfileVal = (check: boolean, value: string) => {
       if (check) {
         store.dispatch("setProfileVals", {
           type: "assist",
           value: [...store.state.profile.assist, value],
         });
-        // emit("update:assist", [...props.value["assist"], value]);
       } else {
         const removeAssist = store.state.profile.assist.filter(
           (item) => item !== value
@@ -81,7 +86,6 @@ export default {
           type: "assist",
           value: [...removeAssist],
         });
-        // emit("update:assist", [...removeAssist]);
       }
     };
     return {

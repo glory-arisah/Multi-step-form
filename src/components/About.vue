@@ -12,33 +12,32 @@
       ></textarea>
     </form>
   </section>
+  <!-- v-show="$store.state.stepIndex < Object.keys(steps).length" -->
+  <button @click="$store.dispatch('next')" class="btn next">Next</button>
 </template>
 
-<script>
+<script lang="ts">
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
+import { key } from "../store/index";
 export default {
   name: "About",
   props: ["value", "about"],
   emits: ["update:value", "update:about"],
-  methods: {
-    // update(key, value) {
-    //   this.$emit("update:value", { ...this.value, [key]: value });
-    // },
-  },
   setup() {
-    const store = useStore();
+    const store = useStore(key);
     const firstInput = ref(null);
-    // const update = (e) => {
-    //   emit("update:about", e.target.value)
-    // }
 
-    const setProfileVal = (event) => {
-      const value = event.target.value;
+    const setProfileVal = (event: Event) => {
+      const { target } = event;
+      const TargetType = target as HTMLInputElement;
+      const value = TargetType.value;
       store.dispatch("setProfileVals", { type: "about", value });
     };
 
-    onMounted(() => firstInput.value.focus());
+    onMounted(() => {
+      (firstInput.value! as HTMLInputElement).focus();
+    });
 
     return {
       setProfileVal,
