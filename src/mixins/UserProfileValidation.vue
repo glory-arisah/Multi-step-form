@@ -3,8 +3,7 @@
 </template>
 
 <script lang="ts">
-import { useStore } from "vuex";
-import { key } from "../store/index";
+import { defineComponent } from "vue";
 import { capitalize } from "vue";
 
 interface ValidCheckTypes {
@@ -19,30 +18,30 @@ interface UserValidProps {
   phone: ValidCheckTypes;
   placeOfBirth: ValidCheckTypes;
 }
-export default {
+
+export default defineComponent({
   data() {
     return {
-      store: useStore(key),
       showValidErrors: {
         fullName: { blank: false, length: false },
         email: { blank: false, length: false, format: false },
         phone: { blank: false, format: false },
         placeOfBirth: { blank: false },
-      },
+      } as UserValidProps,
     };
   },
   computed: {
     fullName() {
-      return this.store.state.profile.fullName;
+      return this.$store.state.profile.fullName;
     },
     email() {
-      return this.store.state.profile.email;
+      return this.$store.state.profile.email;
     },
     phone() {
-      return this.store.state.profile.phone;
+      return this.$store.state.profile.phone;
     },
     placeOfBirth() {
-      return this.store.state.profile.placeOfBirth;
+      return this.$store.state.profile.placeOfBirth;
     },
   },
   methods: {
@@ -68,7 +67,7 @@ export default {
             ""
           );
           fullName = this.capitalizeName(this.fullName);
-          this.store.dispatch("setProfileVals", {
+          this.$store.dispatch("setProfileVals", {
             type: "fullName",
             value: fullName,
           });
@@ -89,7 +88,7 @@ export default {
             /[0-9_*!<>&;/\\[\]{}()?'":;%@^]+\s*$/g,
             ""
           );
-          this.store.dispatch("setProfileVals", {
+          this.$store.dispatch("setProfileVals", {
             type: "placeOfBirth",
             value: placeOfBirth,
           });
@@ -97,7 +96,7 @@ export default {
       }
     },
     handleBlankValidation(field: keyof UserValidProps) {
-      this.store.state.profile[field].trim().length === 0 &&
+      this.$store.state.profile[field].trim().length === 0 &&
         (this.showValidErrors[field].blank = true);
     },
     liveValidationUtility(field: keyof UserValidProps, condition: boolean) {
@@ -110,7 +109,7 @@ export default {
     handleLiveValidations(field: keyof UserValidProps, event: Event) {
       const { target } = event;
       const TargetType = target as HTMLInputElement;
-      this.store.dispatch("setProfileVals", {
+      this.$store.dispatch("setProfileVals", {
         type: field,
         value: TargetType.value,
       });
@@ -150,7 +149,7 @@ export default {
       const { target } = e;
       const TargetType = target as HTMLInputElement;
       const value = TargetType.value;
-      this.store.dispatch("setProfileVals", { type, value });
+      this.$store.dispatch("setProfileVals", { type, value });
     },
     setStoreErrors() {
       if (
@@ -158,29 +157,28 @@ export default {
           return value.blank || value.format || value.length;
         })
       ) {
-        this.store.dispatch("hasErrors", true);
+        this.$store.dispatch("hasErrors", true);
         return;
       }
-      this.store.dispatch("hasErrors", false);
+      this.$store.dispatch("hasErrors", false);
     },
     handleSubmit() {
       Object.keys(this.showValidErrors).forEach((field) =>
         this.handleBlankValidation(field as keyof UserValidProps)
       );
-      console.log("here");
       if (
         Object.values(this.showValidErrors).some((value: ValidCheckTypes) => {
           return value.blank || value.format || value.length;
         })
       ) {
-        this.store.dispatch("hasErrors", true);
+        this.$store.dispatch("hasErrors", true);
         return;
       }
-      this.store.dispatch("hasErrors", false);
-      this.store.dispatch("next");
+      this.$store.dispatch("hasErrors", false);
+      this.$store.dispatch("next");
     },
   },
-};
+});
 </script>
 
 <style scoped></style>
