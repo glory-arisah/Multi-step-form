@@ -1,48 +1,96 @@
 <template>
   <section class="about-company">
-    <form class="ac-form">
+    <form @submit="onSubmit" method="post" class="ac-form">
       <h2 class="ac-heading">About your company</h2>
-      <textarea
-        class="ac-form-textarea"
-        rows="9"
-        placeholder="Tell us a bit about your organization."
-        :value="$store.state.profile.about"
-        @input="setProfileVal($event)"
-        ref="firstInput"
-      ></textarea>
+      <VField
+        v-slot="{ field }"
+        v-model="about"
+        name="about"
+        :validate-on-input="true"
+      >
+        <textarea
+          v-bind="field"
+          ref="firstTextArea"
+          class="ac-form-textarea"
+          placeholder="* Tell us a bit about your organization."
+          rows="9"
+        ></textarea>
+      </VField>
+      <ErrorMessage name="about" class="text-danger-sm" />
+      <div class="action-btns">
+        <button @click="$store.dispatch('previous')" class="btn back">
+          Back
+        </button>
+        <button :disabled="!meta.valid" type="submit" class="btn next">
+          Next
+        </button>
+      </div>
     </form>
   </section>
-  <!-- v-show="$store.state.stepIndex < Object.keys(steps).length" -->
-  <button @click="$store.dispatch('next')" class="btn next">Next</button>
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, Ref, computed } from "vue";
 import { useStore } from "vuex";
 import { key } from "../store/index";
+import * as VeeValidate from "vee-validate";
+import * as yup from "yup";
+
 export default {
   name: "About",
-  props: ["value", "about"],
+  props: ["value"],
   emits: ["update:value", "update:about"],
   setup() {
     const store = useStore(key);
-    const firstInput = ref(null);
-
-    const setProfileVal = (event: Event) => {
-      const { target } = event;
-      const TargetType = target as HTMLInputElement;
-      const value = TargetType.value;
-      store.dispatch("setProfileVals", { type: "about", value });
-    };
+    const firstTextArea: Ref<null | HTMLTextAreaElement> = ref(null);
 
     onMounted(() => {
-      (firstInput.value! as HTMLInputElement).focus();
+      firstTextArea.value!.focus();
+      if (!store.state.hasErrors.about) return;
+      store.dispatch("hasErrors", { type: "about", value: true });
+    });
+
+    // VEEVALIDATE SCHEMA
+    const aboutSchema = yup.object({
+      about: yup
+        .string()
+        .trim("remove white spaces")
+        .required("* this field is required")
+        .min(20, "* minimum of 20 characters"),
+    });
+
+    // VEE-VALIDATE USEFORM SETUP
+    const { handleSubmit, meta } = VeeValidate.useForm({
+      validationSchema: aboutSchema,
+    });
+
+    // VUEX USER ABOUT FIELD STATE
+    const about = computed({
+      get: () => store.state.profile.about,
+      set: (value) => {
+        store.dispatch("setProfileVals", { type: "about", value });
+        store.dispatch("hasErrors", {
+          type: "about",
+          value: !meta.value.valid,
+        });
+      },
+    });
+
+    // FORM SUBMISSION
+    const onSubmit = handleSubmit(() => {
+      store.dispatch("next");
     });
 
     return {
-      setProfileVal,
-      firstInput,
+      firstTextArea,
+      about,
+      onSubmit,
+      meta,
     };
+  },
+  components: {
+    VField: VeeValidate.Field,
+    ErrorMessage: VeeValidate.ErrorMessage,
   },
 };
 </script>

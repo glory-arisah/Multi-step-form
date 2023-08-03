@@ -1,36 +1,21 @@
 import { InjectionKey } from "vue";
 import { createStore, Store } from "vuex";
+import { RootState, ProfilePayloadProps, ErrorsProps } from "./types";
 
-export interface UserProfileProps {
-  fullName: string;
-  email: string;
-  phone: string;
-  placeOfBirth: string;
-  about: string;
-  assist: string[];
-  budget: number;
-}
-
-export interface StateProps {
-  users: UserProfileProps[];
-  stepIndex: number;
-  hasErrors: boolean;
-  profile: UserProfileProps;
-}
-
-export interface PayloadProps {
-  type: keyof UserProfileProps;
-  value: never;
-}
 // injection key
-export const key: InjectionKey<Store<StateProps>> = Symbol();
+export const key: InjectionKey<Store<RootState>> = Symbol();
 
-export const store = createStore<StateProps>({
+export const store = createStore<RootState>({
   state: () => {
     return {
       users: [],
       stepIndex: 1,
-      hasErrors: false,
+      hasErrors: {
+        personalDetails: true,
+        about: true,
+        assist: true,
+        budget: true,
+      },
       profile: {
         fullName: "",
         email: "",
@@ -43,7 +28,10 @@ export const store = createStore<StateProps>({
     };
   },
   mutations: {
-    hasErrors: (state, payload: boolean) => (state.hasErrors = payload),
+    hasErrors: (
+      state,
+      { type, value }: { type: keyof ErrorsProps; value: boolean }
+    ) => (state.hasErrors[type] = value),
     next: (state) => state.stepIndex++,
     previous(state) {
       state.stepIndex--;
@@ -59,8 +47,14 @@ export const store = createStore<StateProps>({
         about: "",
         budget: 0,
       };
+      state.hasErrors = {
+        personalDetails: true,
+        about: true,
+        assist: true,
+        budget: true,
+      };
     },
-    setProfileVals: (state, payload: PayloadProps) => {
+    setProfileVals: (state, payload: ProfilePayloadProps) => {
       state.profile[payload.type] = payload.value;
     },
     createUser: (state) => {
@@ -68,11 +62,10 @@ export const store = createStore<StateProps>({
     },
   },
   actions: {
-    hasErrors({ commit }, bool) {
-      commit("hasErrors", bool);
+    hasErrors({ commit }, { type, value }) {
+      commit("hasErrors", { type, value });
     },
-    next({ state, commit }) {
-      if (state.hasErrors) return;
+    next({ commit }) {
       commit("next");
     },
     previous: ({ commit }) => commit("previous"),

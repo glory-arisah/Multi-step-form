@@ -11,31 +11,10 @@
     <div class="index-form-wrapper">
       <StepIndex @step="(value: number) => ($store.state.stepIndex = value)" />
       <section class="form-container">
-        <keep-alive>
-          <component :is="currentStep" :steps="steps" />
-        </keep-alive>
-        <!-- next an submit buttons -->
-        <div
-          :class="{
-            'action-btns': true,
-            'left-align-back-btn': $store.state.stepIndex === 4,
-          }"
-        >
-          <button
-            @click="$store.dispatch('previous')"
-            class="btn back"
-            v-show="$store.state.stepIndex > 1"
-          >
-            Back
-          </button>
-        </div>
-        <button
-          @click="handleSubmit"
-          class="btn submit"
-          v-show="$store.state.stepIndex === Object.keys(steps).length"
-        >
-          Submit Form
-        </button>
+        <!-- <keep-alive> -->
+        <p :class="{ success: true }">{{ message }}</p>
+        <Component :is="currentStep" @handleSubmit="showFormMsg" />
+        <!-- </keep-alive> -->
       </section>
     </div>
   </main>
@@ -44,6 +23,7 @@
 <script lang="ts">
 import { useStore } from "vuex";
 import { key } from "./store/index";
+import { Steps } from "./store/types";
 import { reactive, ref, computed } from "vue";
 import StepIndex from "./components/StepIndex.vue";
 import PersonalDetails from "./components/PersonalDetails.vue";
@@ -61,54 +41,34 @@ export default {
   },
   setup() {
     const store = useStore(key);
+    const message = ref("");
 
-    interface Steps {
-      1: string;
-      2: string;
-      3: string;
-      4: string;
-    }
     // list of each form step
-    const steps = reactive({
+    const steps: Steps = reactive({
       1: "PersonalDetails",
       2: "About",
       3: "Assist",
       4: "Budget",
     });
-    // current component
-    const stepComp = ref(steps[1]);
+
     // current component's index
-    // const stepIndex = ref(store.state.stepIndex)
     const currentStep = computed(
       (): string => steps[store.state.stepIndex as keyof Steps]
     );
-    // method property(s)
-    // const stepCalc = (value) => (stepComp.value = value);
-    // personal details
-    const clientDetails = reactive({
-      fullName: "",
-      email: "",
-      phone: "",
-      placeOfBirth: "",
-      about: "",
-      assist: [],
-      budget: 0,
-    });
-    // submit form method
-    const handleSubmit = () => {
-      store.dispatch("createUser");
-      store.dispatch("resetStepIndex");
-    };
-    //
+
+    function showFormMsg() {
+      message.value = "Your details have been submitted successfully.";
+      setTimeout(() => {
+        message.value = "";
+      }, 2000);
+    }
+
     return {
       steps,
-      stepComp,
-      clientDetails,
-      handleSubmit,
       currentStep,
+      showFormMsg,
+      message,
     };
   },
 };
 </script>
-
-<!-- <style lang="scss" src="./assets/css/App.scss"></style> -->

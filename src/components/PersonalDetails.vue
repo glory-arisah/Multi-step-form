@@ -1,114 +1,138 @@
 <template>
   <section class="personal-details">
-    <form class="pd-form">
+    <form @submit="onSubmit" class="pd-form">
       <h2 class="pd-heading">Please fill your details</h2>
-      <input
+      <!-- full name -->
+      <VField
+        v-slot="{ field }"
+        v-model="fullName"
+        name="fullName"
+        :validate-on-input="true"
+      >
+        <input
+          v-bind="field"
+          ref="firstInput"
+          class="pd-form-input"
+          placeholder="* Full name"
+        />
+      </VField>
+      <ErrorMessage name="fullName" class="text-danger-sm" />
+      <!-- email -->
+      <VField
+        name="email"
+        v-model="email"
+        placeholder="* Email"
+        :validate-on-input="true"
         class="pd-form-input"
-        :value="$store.state.profile.fullName"
-        @input="
-          handleLiveValidations('fullName', $event);
-          setStoreErrors();
-        "
-        type="text"
-        placeholder="Full name"
-        ref="firstInput"
       />
-      <!-- validation error messages -->
-      <p v-show="showValidErrors.fullName.length" class="text-danger-sm">
-        * fullname should be between 8 and 35 characters
-      </p>
-      <p v-show="showValidErrors.fullName.blank" class="text-danger-sm">
-        * this field is required
-      </p>
-      <input
+      <ErrorMessage name="email" class="text-danger-sm" />
+      <!-- phone number -->
+      <VField
+        name="phone"
+        v-model="phone"
+        placeholder="* Phone number"
+        :validate-on-input="true"
         class="pd-form-input"
-        :value="$store.state.profile.email"
-        @input="
-          handleLiveValidations('email', $event);
-          setStoreErrors();
-        "
-        type="text"
-        placeholder="Email"
       />
-      <!-- validation error messages -->
-      <p v-show="showValidErrors.email.length" class="text-danger-sm">
-        * email should be between 8 and 35 characters
-      </p>
-      <p v-show="showValidErrors.email.blank" class="text-danger-sm">
-        * this field is required
-      </p>
-      <p v-show="showValidErrors.email.format" class="text-danger-sm">
-        * please enter a valid email
-      </p>
-      <input
+      <ErrorMessage name="phone" class="text-danger-sm" />
+      <!-- place of birth -->
+      <VField
+        name="placeOfBirth"
+        v-model="placeOfBirth"
+        placeholder="* Place of birth"
+        :validate-on-input="true"
         class="pd-form-input"
-        :value="$store.state.profile.phone"
-        @input="
-          handleLiveValidations('phone', $event);
-          setStoreErrors();
-        "
-        type="text"
-        placeholder="Phone number"
       />
-      <!-- validation error messages -->
-      <p v-show="showValidErrors.phone.blank" class="text-danger-sm">
-        * this field is required
-      </p>
-      <p v-show="showValidErrors.phone.format" class="text-danger-sm">
-        * please enter a valid phone number
-      </p>
-      <input
-        class="pd-form-input"
-        :value="$store.state.profile.placeOfBirth"
-        @input="
-          handleLiveValidations('placeOfBirth', $event);
-          setStoreErrors();
-        "
-        type="text"
-        placeholder="Place of birth"
-      />
-      <!-- validation error messages -->
-      <p v-show="showValidErrors.placeOfBirth.blank" class="text-danger-sm">
-        * this field is required
-      </p>
+      <ErrorMessage name="placeOfBirth" class="text-danger-sm" />
+      <button :disabled="!meta.valid" type="submit" class="btn next">
+        Next
+      </button>
     </form>
   </section>
-  <button
-    @click="handleSubmit"
-    class="btn next"
-    v-show="$store.state.stepIndex < Object.keys(steps).length"
-  >
-    Next
-  </button>
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
-import UserProfileValidation from "@/mixins/UserProfileValidation.vue";
+import { onMounted, ref, Ref } from "vue";
+import { useStore } from "vuex";
+import { key } from "@/store";
+import { PersonalDetailsProps } from "@/store/types";
+import PersonalDetailsComp from "@/composables/PersonalDetailsComp";
+import * as yup from "yup";
+import * as VeeValidate from "vee-validate";
+
 export default {
   name: "PersonalDetails",
-  props: ["steps"],
-  mixins: [UserProfileValidation],
   setup() {
-    const firstInput = ref(null);
+    const store = useStore(key);
+    const firstInput: Ref<null | HTMLInputElement> = ref(null);
+
     onMounted(() => {
-      firstInput.value && (firstInput.value as HTMLInputElement).focus();
+      firstInput.value!.focus();
+      if (!store.state.hasErrors.personalDetails) return;
+      store.dispatch("hasErrors", { type: "personalDetails", value: true });
     });
+
+    // VEE-VALIDATE SCHEMA
+    const personalDetailsSchema: yup.ObjectSchema<PersonalDetailsProps> =
+      yup.object({
+        fullName: yup
+          .string()
+          .required("* full name is required")
+          .matches(/^[A-Za-z\s?]+$/, "* numbers are not allowed")
+          .min(8, "* full name is too short"),
+        email: yup
+          .string()
+          .required("* email is required")
+          .email("* email should be in correct format"),
+        phone: yup
+          .string()
+          .required("* phone number is required")
+          .matches(
+            /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,7}$/,
+            "* phone number is required in correct format"
+          ),
+        placeOfBirth: yup
+          .string()
+          .required("* your place of birth is required"),
+      });
+
+    // VEE-VALIDATE USEFORM SETUP
+    const { handleSubmit, meta } = VeeValidate.useForm<PersonalDetailsProps>({
+      validationSchema: personalDetailsSchema,
+    });
+
+    // VUEX USER PERSONAL DETAILS FORM FIELDS STATE
+    const { fullName, email, phone, placeOfBirth } = PersonalDetailsComp(
+      meta.value
+    );
+
+    // FORM SUBMISSION
+    function onSuccess() {
+      store.dispatch("hasErrors", { type: "personalDetails", value: false });
+      store.dispatch("next");
+    }
+
+    const onSubmit = handleSubmit(onSuccess);
 
     return {
       firstInput,
+      onSubmit,
+      fullName,
+      email,
+      phone,
+      placeOfBirth,
+      handleSubmit,
+      meta,
     };
+  },
+  components: {
+    VField: VeeValidate.Field,
+    ErrorMessage: VeeValidate.ErrorMessage,
   },
 };
 </script>
 
 <style scoped>
-/* Utilities */
-.text-danger-sm {
-  color: rgb(239 68 68);
-  font-size: 0.75rem /* 12px */;
-  line-height: 1rem /* 16px */;
-}
 .personal-details {
   width: 80%;
 }
