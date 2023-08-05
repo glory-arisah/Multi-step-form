@@ -44,17 +44,11 @@ export default {
     const store = useStore(key);
     const firstTextArea: Ref<null | HTMLTextAreaElement> = ref(null);
 
-    onMounted(() => {
-      firstTextArea.value!.focus();
-      if (!store.state.hasErrors.about) return;
-      store.dispatch("hasErrors", { type: "about", value: true });
-    });
-
     // VEEVALIDATE SCHEMA
     const aboutSchema = yup.object({
       about: yup
         .string()
-        .trim("remove white spaces")
+        .trim()
         .required("* this field is required")
         .min(20, "* minimum of 20 characters"),
     });
@@ -62,6 +56,15 @@ export default {
     // VEE-VALIDATE USEFORM SETUP
     const { handleSubmit, meta } = VeeValidate.useForm({
       validationSchema: aboutSchema,
+    });
+
+    onMounted(() => {
+      firstTextArea.value!.focus();
+      if (!store.state.hasErrors.about) {
+        store.dispatch("hasErrors", { type: "about", value: false });
+        return;
+      }
+      store.dispatch("hasErrors", { type: "about", value: true });
     });
 
     // VUEX USER ABOUT FIELD STATE

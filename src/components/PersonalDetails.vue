@@ -6,6 +6,7 @@
       <VField
         v-slot="{ field }"
         v-model="fullName"
+        @input="$emit('handlePdErrors', !meta.valid)"
         name="fullName"
         :validate-on-input="true"
       >
@@ -21,6 +22,7 @@
       <VField
         name="email"
         v-model="email"
+        @input="$emit('handlePdErrors', !meta.valid)"
         placeholder="* Email"
         :validate-on-input="true"
         class="pd-form-input"
@@ -30,6 +32,7 @@
       <VField
         name="phone"
         v-model="phone"
+        @input="$emit('handlePdErrors', !meta.valid)"
         placeholder="* Phone number"
         :validate-on-input="true"
         class="pd-form-input"
@@ -39,6 +42,7 @@
       <VField
         name="placeOfBirth"
         v-model="placeOfBirth"
+        @input="$emit('handlePdErrors', !meta.valid)"
         placeholder="* Place of birth"
         :validate-on-input="true"
         class="pd-form-input"
@@ -56,8 +60,9 @@ import { onMounted, ref, Ref } from "vue";
 import { useStore } from "vuex";
 import { key } from "@/store";
 import { PersonalDetailsProps } from "@/store/types";
-import PersonalDetailsComp from "@/composables/PersonalDetailsComp";
-import * as yup from "yup";
+import PersonalDetailsComp from "@/composables/PersonalDetails";
+// SCHEMA
+import personalDetailsSchema from "@/schema/PersonalDetails";
 import * as VeeValidate from "vee-validate";
 
 export default {
@@ -68,43 +73,24 @@ export default {
 
     onMounted(() => {
       firstInput.value!.focus();
-      if (!store.state.hasErrors.personalDetails) return;
-      store.dispatch("hasErrors", { type: "personalDetails", value: true });
+      console.log(store.state.hasErrors.personalDetails);
+      // if (!store.state.hasErrors.personalDetails) {
+      //   store.dispatch("hasErrors", { type: "personalDetails", value: false });
+      //   return;
+      // }
+      // store.dispatch("hasErrors", { type: "personalDetails", value: true });
     });
-
-    // VEE-VALIDATE SCHEMA
-    const personalDetailsSchema: yup.ObjectSchema<PersonalDetailsProps> =
-      yup.object({
-        fullName: yup
-          .string()
-          .required("* full name is required")
-          .matches(/^[A-Za-z\s?]+$/, "* numbers are not allowed")
-          .min(8, "* full name is too short"),
-        email: yup
-          .string()
-          .required("* email is required")
-          .email("* email should be in correct format"),
-        phone: yup
-          .string()
-          .required("* phone number is required")
-          .matches(
-            /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,7}$/,
-            "* phone number is required in correct format"
-          ),
-        placeOfBirth: yup
-          .string()
-          .required("* your place of birth is required"),
-      });
 
     // VEE-VALIDATE USEFORM SETUP
     const { handleSubmit, meta } = VeeValidate.useForm<PersonalDetailsProps>({
       validationSchema: personalDetailsSchema,
+      // validateOnMount: true,
     });
 
-    // VUEX USER PERSONAL DETAILS FORM FIELDS STATE
-    const { fullName, email, phone, placeOfBirth } = PersonalDetailsComp(
-      meta.value
-    );
+    // VUEX USER PERSONAL DETAILS FORM FIELDS STATES
+    const { fullName, email, phone, placeOfBirth } = PersonalDetailsComp();
+    // meta.value,
+    // isValidating.value
 
     // FORM SUBMISSION
     function onSuccess() {

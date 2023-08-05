@@ -87,15 +87,13 @@
               v-bind="field"
               v-model="assist"
               type="checkbox"
-              value="nil"
-              @change="handleChange('nil')"
+              value="no-req"
+              @change="handleChange('no-req')"
             />
           </VField>
           <span>No request</span>
         </p>
-        <span>
-          <ErrorMessage name="assist" class="text-danger-sm" />
-        </span>
+        <ErrorMessage as="span" name="assist" class="text-danger-sm" />
       </section>
       <div class="action-btns">
         <button @click="$store.dispatch('previous')" class="btn back">
@@ -147,26 +145,42 @@ export default {
       if (check) {
         store.dispatch("setProfileVals", {
           type: "assist",
+          // @ts-ignore
           value: [...store.state.profile.assist, value],
         });
       } else {
+        // @ts-ignore
         const assists = store.state.profile.assist.filter(
-          (item) => item !== value
+          (item: string) => item !== value
         );
         store.dispatch("setProfileVals", {
           type: "assist",
           value: [...assists],
         });
       }
+      localStorage.setItem(
+        "assist",
+        JSON.stringify(store.state.profile.assist)
+      );
     };
 
     const assist = computed({
-      get: () => store.state.profile.assist,
+      get: () => {
+        console.log(localStorage.getItem("assist"));
+        if (localStorage.getItem("assist")!) {
+          store.dispatch("setProfileVals", {
+            type: "assist",
+            value: JSON.parse(localStorage.getItem("assist")!),
+          });
+        }
+        return store.state.profile.assist;
+      },
       set: () => {
         setAssists(
           (event!.target as HTMLInputElement).checked,
           (event!.target as HTMLInputElement).value
         );
+        // @ts-ignore
         store.state.profile.assist.length
           ? store.dispatch("hasErrors", { type: "assist", value: false })
           : store.dispatch("hasErrors", { type: "assist", value: true });
