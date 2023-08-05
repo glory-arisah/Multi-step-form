@@ -13,7 +13,11 @@
       <section class="form-container">
         <!-- <keep-alive> -->
         <p :class="{ success: true }">{{ message }}</p>
-        <Component :is="currentStep" @handleSubmit="showFormMsg" />
+        <Component
+          :is="currentStep"
+          @handleSubmit="showFormMsg"
+          @handlePdErrors="handlePdErrors"
+        />
         <!-- </keep-alive> -->
       </section>
     </div>
@@ -42,7 +46,6 @@ export default {
   setup() {
     const store = useStore(key);
     const message = ref("");
-
     // list of each form step
     const steps: Steps = reactive({
       1: "PersonalDetails",
@@ -63,11 +66,17 @@ export default {
       }, 2000);
     }
 
+    function handlePdErrors(value: boolean) {
+      console.log(value);
+      store.dispatch("hasErrors", { type: "personalDetails", value });
+    }
+
     return {
       steps,
       currentStep,
       showFormMsg,
       message,
+      handlePdErrors,
     };
   },
 };

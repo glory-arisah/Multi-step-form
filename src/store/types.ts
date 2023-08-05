@@ -1,21 +1,28 @@
+import type { RemovableRef } from "@vueuse/core";
+
+export type LSString = RemovableRef<string> | string;
+export type LSNumber = RemovableRef<number> | number;
+export type LSArray = RemovableRef<string[]> | string[];
+export type LSBool = RemovableRef<boolean> | boolean;
+
 export interface ErrorsProps {
-  personalDetails: boolean;
-  about: boolean;
-  assist: boolean;
-  budget: boolean;
+  personalDetails: LSBool;
+  about: LSBool;
+  assist: LSBool;
+  budget: LSBool;
 }
 
 export interface PersonalDetailsProps {
-  fullName: string;
-  email: string;
-  phone: string;
-  placeOfBirth: string;
+  fullName: LSString;
+  email: LSString;
+  phone: LSString;
+  placeOfBirth: LSString;
 }
 
 export interface UserProfileProps extends PersonalDetailsProps {
-  about: string;
-  assist: string[];
-  budget: number;
+  about: LSString;
+  assist: LSArray;
+  budget: LSNumber;
 }
 
 export interface RootState {

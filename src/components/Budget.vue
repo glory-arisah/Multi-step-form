@@ -18,7 +18,7 @@
           <button @click="$store.dispatch('previous')" class="btn back">
             Back
           </button>
-          <button type="submit" :disabled="!meta.valid" class="btn submit">
+          <button type="submit" :disabled="!isFormValid" class="btn submit">
             Submit
           </button>
         </div>
@@ -71,7 +71,7 @@ export default {
     const onSubmit = handleSubmit(() => {
       emit("handleSubmit");
       store.dispatch("createUser");
-      store.dispatch("resetStepIndex");
+      store.dispatch("resetForm");
     });
 
     const isFormValid = computed(() => {
